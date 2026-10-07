@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Multiple Disease Prediction System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e8f5f9, #f5f9ff);
+            min-height: 100vh;
+            color: #263238;
+        }
+
+        .header {
+            background: #0b7285;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 950px;
+            margin: 35px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            color: #0b7285;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .description {
+            color: #607d8b;
+            margin-bottom: 25px;
+        }
+
+        .symptom-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .symptom {
+            border: 2px solid #e0e7eb;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #fafcfd;
+        }
+
+        .symptom:hover {
+            border-color: #0b7285;
+            background: #f0fbfd;
+        }
+
+        .symptom input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .predict-btn {
+            background: #0b7285;
+            color: white;
+        }
+
+        .predict-btn:hover {
+            background: #095c6b;
+        }
+
+        .clear-btn {
+            background: #e9ecef;
+            color: #263238;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 22px;
+            border-radius: 14px;
+            background: #e8f7f9;
+            border-left: 6px solid #0b7285;
+        }
+
+        .result h2 {
+            color: #0b7285;
+            margin-bottom: 10px;
+        }
+
+        .result .disease {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .warning {
+            margin-top: 25px;
+            padding: 15px;
+            background: #fff8e1;
+            border-left: 5px solid #f59f00;
+            border-radius: 8px;
+            color: #5f4700;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            margin: 25px 0;
+            color: #78909c;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .symptom-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🩺 Multiple Disease Prediction System</h1>
+        <p>Machine Learning Based Health Prediction</p>
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2 class="section-title">Select Your Symptoms</h2>
+
+            <p class="description">
+                Select the symptoms you are currently experiencing and click
+                <strong>Predict Disease</strong>.
+            </p>
+
+            <form action="/predict" method="POST">
+
+                <div class="symptom-grid">
+
+                    {% for symptom in symptoms %}
+
+                    <label class="symptom">
+                        <input
+                            type="checkbox"
+                            name="symptoms"
+                            value="{{ symptom }}"
+                        >
+                        {{ symptom }}
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="buttons">
+
+                    <button type="submit" class="predict-btn">
+                        🔍 Predict Disease
+                    </button>
+
+                    <button
+                        type="button"
+                        class="clear-btn"
+                        onclick="clearSymptoms()"
+                    >
+                        ✕ Clear Selection
+                    </button>
+
+                </div>
+
+            </form>
+
+            {% if prediction %}
+
+            <div class="result">
+
+                <h2>Prediction Result</h2>
+
+                <p>
+                    Based on the selected symptoms, the system predicts:
+                </p>
+
+                <br>
+
+                <div class="disease">
+                    {{ prediction }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            <div class="warning">
+
+                ⚠️ <strong>Medical Disclaimer:</strong>
+
+                This application is developed for educational and
+                demonstration purposes only. The prediction should not be
+                considered a medical diagnosis. Please consult a qualified
+                healthcare professional for medical advice.
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Multiple Disease Prediction System | Machine Learning Project
+    </div>
+
+    <script>
+
+        function clearSymptoms() {
+
+            const checkboxes =
+                document.querySelectorAll(
+                    'input[type="checkbox"]'
+                );
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+
+        }
+
+    </script>
+
+</body>
+</html>

@@ -23,9 +23,9 @@
         .header {
             background: #0b7285;
             color: white;
-            padding: 25px 20px;
+            padding: 28px 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .header h1 {
@@ -48,7 +48,7 @@
             background: white;
             padding: 30px;
             border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
         }
 
         .section-title {
@@ -62,20 +62,48 @@
             margin-bottom: 25px;
         }
 
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #e0e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            border-color: #0b7285;
+        }
+
         .symptom-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 25px;
+            margin: 20px 0 25px;
         }
 
         .symptom {
             border: 2px solid #e0e7eb;
             padding: 15px;
             border-radius: 12px;
+            background: #fafcfd;
             cursor: pointer;
             transition: 0.2s;
-            background: #fafcfd;
         }
 
         .symptom:hover {
@@ -130,9 +158,10 @@
             margin-bottom: 10px;
         }
 
-        .result .disease {
+        .disease {
             font-size: 25px;
             font-weight: bold;
+            margin-top: 10px;
         }
 
         .warning {
@@ -153,7 +182,8 @@
         }
 
         @media (max-width: 650px) {
-            .symptom-grid {
+            .symptom-grid,
+            .details {
                 grid-template-columns: 1fr;
             }
 
@@ -179,29 +209,104 @@
 
         <div class="card">
 
-            <h2 class="section-title">Select Your Symptoms</h2>
+            <h2 class="section-title">Patient Information</h2>
 
             <p class="description">
-                Select the symptoms you are currently experiencing and click
-                <strong>Predict Disease</strong>.
+                Enter the basic information and select the symptoms.
             </p>
 
             <form action="/predict" method="POST">
 
+                <div class="details">
+
+                    <div class="field">
+                        <label for="Age">Age</label>
+                        <input
+                            type="number"
+                            id="Age"
+                            name="Age"
+                            min="1"
+                            max="120"
+                            placeholder="Enter age"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="Gender">Gender</label>
+
+                        <select id="Gender" name="Gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <h2 class="section-title">Select Symptoms</h2>
+
                 <div class="symptom-grid">
 
-                    {% for symptom in symptoms %}
-
                     <label class="symptom">
-                        <input
-                            type="checkbox"
-                            name="symptoms"
-                            value="{{ symptom }}"
-                        >
-                        {{ symptom }}
+                        <input type="checkbox" name="Fever" value="1">
+                        Fever
                     </label>
 
-                    {% endfor %}
+                    <label class="symptom">
+                        <input type="checkbox" name="Cough" value="1">
+                        Cough
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="Headache" value="1">
+                        Headache
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="Fatigue" value="1">
+                        Fatigue
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="SoreThroat" value="1">
+                        Sore Throat
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="BodyPain" value="1">
+                        Body Pain
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="ShortnessOfBreath" value="1">
+                        Shortness of Breath
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="Nausea" value="1">
+                        Nausea
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="Vomiting" value="1">
+                        Vomiting
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="Diarrhea" value="1">
+                        Diarrhea
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="JointPain" value="1">
+                        Joint Pain
+                    </label>
+
+                    <label class="symptom">
+                        <input type="checkbox" name="Rash" value="1">
+                        Rash
+                    </label>
 
                 </div>
 
@@ -214,9 +319,8 @@
                     <button
                         type="button"
                         class="clear-btn"
-                        onclick="clearSymptoms()"
-                    >
-                        ✕ Clear Selection
+                        onclick="clearForm()">
+                        ✕ Clear
                     </button>
 
                 </div>
@@ -229,11 +333,7 @@
 
                 <h2>Prediction Result</h2>
 
-                <p>
-                    Based on the selected symptoms, the system predicts:
-                </p>
-
-                <br>
+                <p>Based on the entered information:</p>
 
                 <div class="disease">
                     {{ prediction }}
@@ -245,12 +345,12 @@
 
             <div class="warning">
 
-                ⚠️ <strong>Medical Disclaimer:</strong>
+                ⚠️ <strong>Medical Disclaimer:</strong><br><br>
 
                 This application is developed for educational and
-                demonstration purposes only. The prediction should not be
-                considered a medical diagnosis. Please consult a qualified
-                healthcare professional for medical advice.
+                demonstration purposes only. It is not a medically
+                validated diagnostic system and should not be used
+                for actual medical diagnosis or treatment.
 
             </div>
 
@@ -263,20 +363,9 @@
     </div>
 
     <script>
-
-        function clearSymptoms() {
-
-            const checkboxes =
-                document.querySelectorAll(
-                    'input[type="checkbox"]'
-                );
-
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = false;
-            });
-
+        function clearForm() {
+            document.querySelector("form").reset();
         }
-
     </script>
 
 </body>
